@@ -8,22 +8,24 @@ import pandas as pd
 import plotly as py
 from plotly import tools
 import plotly.graph_objs as go
-from features_functions import *
+from feature_functions import *
 
 ############## Step 1 - Load up our data & create moving average ################
 
-df = pd.read_csv('EURUSDhours.csv', index_col='Gmt time')
-df.index.names = ['Date']
-df.index = pd.to_datetime(df.index, format='%d.%m.%Y %H:%M:%S.%f')
-
-# Keep unique values in the dataframe, drop all the duplicates
-df.drop_duplicates(keep=False, inplace=True)
-
-# See the candles better
-df = df.iloc[:200]
-
-# moving average of the opening
-ma= df.Close.rolling(center=False, window=30).mean()
+# df = pd.read_csv('EURUSDhours.csv', index_col='Gmt time')
+df = pd.read_csv('data/dataframe.csv')
+print(df)
+# df.index.names = ['Date']
+# df.index = pd.to_datetime(df.index, format='%d.%m.%Y %H:%M:%S.%f')
+#
+# # Keep unique values in the dataframe, drop all the duplicates
+# df.drop_duplicates(keep=False, inplace=True)
+#
+# # See the candles better
+# df = df.iloc[:200]
+#
+# # moving average of the opening
+# ma = df.Close.rolling(center=False, window=30).mean()
 
 ############ Step 2 - Get function data from selected function: ################
 
@@ -83,14 +85,14 @@ ma= df.Close.rolling(center=False, window=30).mean()
 # res = average.avs[30]
 
 ## Slope Functions
-slope_f = slopes(df, [30])
-res = slope_f.slope[30]
+# slope_f = slopes(df, [30])
+# res = slope_f.slope[30]
 
 
 ############################## Step 3 - Plot ###################################
 
-trace0 = go.Ohlc(x=df.index, open=df.Open, high=df.High, low=df.Low, close=df.Close, name='Currency Quote')
-trace1 = go.Scatter(x=df.index, y=ma, name='Moving Average')
+# trace0 = go.Ohlc(x=df.index, open=df.Open, high=df.High, low=df.Low, close=df.Close, name='Currency Quote')
+# trace1 = go.Scatter(x=df.index, y=ma, name='Moving Average')
 # trace2 = go.Bar(x=df.index, y=df.Volume, name='Volume')
 # trace2 = go.Ohlc(x=ha.index, open=ha.Open, high=ha.High, low=ha.Low, close=ha.Close, name='Heiken Ashi')
 # trace2 = go.Scatter(x=df.index, y=detrended, name='Linear Detrended')
@@ -106,14 +108,14 @@ trace1 = go.Scatter(x=df.index, y=ma, name='Moving Average')
 # trace2 = go.Scatter(x=res.index, y=res.Close, name='Commodity Channel Index')
 # trace2 = go.Scatter(x=res.index, y=res.Upper, name='Bollinger Bands')
 # trace2 = go.Scatter(x=res.index, y=res.Close, name='Price Averages')
-trace2 = go.Scatter(x=res.index, y=res.High, name='Slopes')
+# trace2 = go.Scatter(x=res.index, y=res.High, name='Slopes')
 
-data = [trace0, trace1, trace2]
-
-fig = tools.make_subplots(rows=2, cols=1, shared_xaxes=True)
-fig.append_trace(trace0, 1, 1)
-fig.append_trace(trace1, 1, 1)
-fig.append_trace(trace2, 2, 1)
-
+# data = [trace0, trace1, trace2]
+#
+# fig = tools.make_subplots(rows=2, cols=1, shared_xaxes=True)
+# fig.append_trace(trace0, 1, 1)
+# fig.append_trace(trace1, 1, 1)
+# fig.append_trace(trace2, 2, 1)
+#
 # py.offline.plot(fig, filename='test_data_resampling.html')
-py.offline.plot(fig, filename='test_slopes.html')
+# py.offline.plot(fig, filename='data/test_slopes.html')

@@ -70,7 +70,7 @@ def heikenashi(prices, periods):
     # Rename the columns
     df.columns = ['Open', 'High', 'Low', 'Close']
 
-    # df.index = df.index.drolevel(0)
+    df.index = df.index.droplevel(0)
 
     # Store our dataframe for this period in the periods dictionnary
     dict[periods[0]] = df
@@ -190,10 +190,10 @@ def fourier(prices, periods, method='difference'):
     results = Holder()
 
     # Create an empty dictionnary
-    dict ={}
+    dictio = {}
 
     # Option to plot the expansion fit for each iteration
-    plot = True
+    plot = False
 
     # Compute the coefficients of the series
     detrended = detrend(prices, method)
@@ -236,7 +236,7 @@ def fourier(prices, periods, method='difference'):
         coeffs = np.array(coeffs).reshape(((len(coeffs)//4, 4)))
 
         # Store it in the pandas dataframe
-        df = pd.DataFrame(coeffs, index=prices.iloc[hours:-hours])
+        df = pd.DataFrame(coeffs, index=prices.iloc[hours:-hours].index)
 
         # Rename columns
         df.columns = ['a0', 'a1', 'b1', 'w']
@@ -245,9 +245,9 @@ def fourier(prices, periods, method='difference'):
         df.fillna(method='bfill')
 
         # Store this dataframe in the dictionnary
-        dict[hours] = df
+        dictio[hours] = df
 
-    results.coeffs = dict
+    results.coeffs = dictio
 
     return results
 
@@ -319,7 +319,7 @@ def sine(prices, periods, method='difference'):
         coeffs = np.array(coeffs).reshape(((len(coeffs)//3, 3)))
 
         # Store it in the pandas dataframe
-        df = pd.DataFrame(coeffs, index=prices.iloc[hours:-hours])
+        df = pd.DataFrame(coeffs, index=prices.iloc[hours:-hours].index)
 
         # Rename columns
         df.columns = ['a0', 'b1', 'w']
@@ -372,7 +372,7 @@ def wadl(prices, periods):
                 print('Unknown error occured, see administrator')
 
             # Calculate Accumulation Distribution
-            acc_distrib = price_move * prices.Volume.iloc[j]
+            acc_distrib = price_move * prices.AskVol.iloc[j]
 
             wad = np.append(wad, acc_distrib)
 
@@ -421,7 +421,7 @@ def ohlcresample(df, timeframe, column='ask'):
            raise ValueError('Column must be a string. Either ask or bid')
 
     # Resampling data that are already in candles format
-    elif np.any(df.columns == 'close'):
+    elif np.any(df.columns == 'Close'):
         open = grouped['Open'].resample(timeframe).ohlc()
         close = grouped['Close'].resample(timeframe).ohlc()
         high = grouped['High'].resample(timeframe).ohlc()
@@ -429,10 +429,13 @@ def ohlcresample(df, timeframe, column='ask'):
         askvol = grouped['AskVol'].resample(timeframe).count()
 
         resampled = pd.DataFrame(open)
-        resampled['High'] = high
-        resampled['Low'] = low
-        resampled['Close'] = close
+        resampled.columns = ['Open', 'High', 'Low', 'Close']
+        resampled['High'] = high['high']
+        resampled['Low'] = low['low']
+        resampled['Close'] = close['close']
         resampled['AskVol'] = askvol
+
+
 
     resampled.dropna(inplace=True)
 
@@ -605,7 +608,7 @@ def adosc(prices, periods):
             AD = np.append(AD, CLV*V)
 
         AD = AD.cumsum()
-        df = pd.DataFrame(Rs, index=prices.iloc[hours+1:-hours+1].index)
+        df = pd.DataFrame(AD, index=prices.iloc[hours+1:-hours+1].index)
         df.columns = ['AD']
         # df['D'] = df.R.rolling(3).mean()
         # df.dropna(inplace=True)

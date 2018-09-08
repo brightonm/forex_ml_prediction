@@ -31,6 +31,7 @@ Give examples
 ## Authors
 
 * **Brighton Muffat** - (https://github.com/brightonm)
+* The authors of the research paper. 
 
 
 

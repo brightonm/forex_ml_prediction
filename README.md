@@ -12,7 +12,7 @@ Based on the research paper: FOREX Trend Classification using Machine Learning T
 
   
 ```
-Give examples
+CODE
 ```
 
 ### Preprocessing
